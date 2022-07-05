@@ -26,3 +26,13 @@ func (ab *AksesBook) GetDataBook() []Book {
 
 	return daftarBook
 }
+
+func (ab *AksesBook) InputBook(newBook Book) Book {
+	err := ab.DB.Create(&newBook).Error
+	if err != nil {
+		log.Fatal(err)
+		return Book{}
+	}
+
+	return newBook
+}

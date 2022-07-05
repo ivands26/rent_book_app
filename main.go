@@ -119,6 +119,20 @@ func main() {
 						} else {
 							input2 = inputYT
 						}
+
+					case 4:
+						var newBook entity.Book
+						fmt.Print("Book Title: ")
+						fmt.Scanln(&newBook.Judul)
+						fmt.Print("Author : ")
+						fmt.Scanln(&newBook.Author)
+						res := aksesBook.InputBook(newBook)
+						if res.ID == 0 {
+							fmt.Println("Buku Gagal Diinput")
+							break
+						}
+						fmt.Println("Buku Berhasil Diinput\n")
+
 					default:
 						continue
 					}
