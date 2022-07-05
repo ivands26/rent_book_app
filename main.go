@@ -18,11 +18,13 @@ func halamanlogin() (string, string) {
 	return email, pass
 }
 
-func deleteAccount() string {
-	var inputYT string
-	fmt.Println("Apakah anda yakin menghapus akun anda?")
-	fmt.Println("Ketik YA jika anda yakin, Ketik TIDAK jika anda ingin kembali ke menu awal")
-	fmt.Scan(&inputYT)
+func deleteAccount() int {
+	var inputYT int
+	fmt.Println("\nApakah anda yakin ingin menghapus akun anda ?")
+	fmt.Println("1. Ya dan kembali ke halaman utama")
+	fmt.Println("55. Tidak dan kembali ke menu sebelumnya")
+	fmt.Print("\nPilih Menu : ")
+	fmt.Scanln(&inputYT)
 	return inputYT
 }
 func main() {
@@ -74,50 +76,54 @@ func main() {
 				fmt.Println("Email tidak terdaftar")
 			} else if emailpassauth == true {
 				fmt.Println("Login Berhasil")
-
-				for _, val := range aksesUser.GetName(email) {
-					fmt.Printf("\n\tWelcome %s !!\n\n", val.Nama)
-				}
-
-				fmt.Println("1. Lihat Profile")
-				fmt.Println("2. Edit Profile")
-				fmt.Println("3. Delete Account")
-				fmt.Println("4. Tambahkan Buku")
-				fmt.Println("5. Lihat Buku Saya")
-				fmt.Println("6. Pinjam Buku") //nanti masukin list
-				fmt.Println("7. Kembalikan Buku")
-				fmt.Println("99. Keluar\n")
-				fmt.Print("Pilih Menu : ")
-				fmt.Scanln(&input2)
-
-				// for input != 99 {
-				switch input2 {
-				case 1:
-					fmt.Println("Profile Anda")
-					for _, val := range aksesUser.GetProfileUser(email) {
-						fmt.Print("ID : ")
-						fmt.Println(val.ID)
-						fmt.Print("Nama : ")
-						fmt.Println(val.Nama)
-						fmt.Print("No HP : ")
-						fmt.Println(val.No_hp)
-						fmt.Print("Email : ")
-						fmt.Println(val.Email)
-
+				input2 = 0
+				for input2 != 80 {
+					for _, val := range aksesUser.GetName(email) {
+						fmt.Printf("\n\tWelcome %s !!\n\n", val.Nama)
 					}
-				case 3:
-					inputYT := deleteAccount()
-					if inputYT == "YA" {
-						aksesUser.DeleteUser(email)
-						fmt.Println("AKUN BERHASIL DIHAPUS")
-					} else {
+
+					fmt.Println("1. My Profile")
+					fmt.Println("2. Edit Profile")
+					fmt.Println("3. Delete Account")
+					fmt.Println("4. Tambahkan Buku")
+					fmt.Println("5. Lihat Buku Saya")
+					fmt.Println("6. Pinjam Buku") //nanti masukin list
+					fmt.Println("7. Kembalikan Buku")
+					fmt.Println("80. Log Out\n")
+					fmt.Print("Pilih Menu : ")
+					fmt.Scanln(&input2)
+
+					switch input2 {
+					case 1:
+						fmt.Println("\nProfile")
+						for _, val := range aksesUser.GetProfileUser(email) {
+							fmt.Print("ID\t: ")
+							fmt.Println(val.ID)
+							fmt.Print("Nama\t: ")
+							fmt.Println(val.Nama)
+							fmt.Print("No HP\t: ")
+							fmt.Println(val.No_hp)
+							fmt.Print("Email\t: ")
+							fmt.Println(val.Email)
+
+							fmt.Println("\n55. Kembali ke menu sebelumnya \n")
+							fmt.Print("Pilih Menu : ")
+							fmt.Scanln(&input2)
+						}
+					case 3:
+						inputYT := deleteAccount()
+						if inputYT == 1 {
+							aksesUser.DeleteUser(email)
+							fmt.Println("\nAKUN BERHASIL DIHAPUS\n")
+							input2 = 80
+						} else {
+							input2 = inputYT
+						}
+					default:
 						continue
 					}
-				default:
-					continue
-				}
 
-				// }
+				}
 			}
 
 		case 3:
@@ -137,5 +143,5 @@ func main() {
 			continue
 		}
 	}
-	fmt.Println("TERIMA KASIH TELAH MENGGUNAKAN APLIKASI KAMI")
+	fmt.Println("\nTERIMA KASIH TELAH MENGGUNAKAN APLIKASI KAMI :)")
 }
