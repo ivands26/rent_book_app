@@ -17,6 +17,14 @@ func halamanlogin() (string, string) {
 	fmt.Scanln(&pass)
 	return email, pass
 }
+
+func deleteAccount() string {
+	var inputYT string
+	fmt.Println("Apakah anda yakin menghapus akun anda?")
+	fmt.Println("Ketik YA jika anda yakin, Ketik TIDAK jika anda ingin kembali ke menu awal")
+	fmt.Scan(&inputYT)
+	return inputYT
+}
 func main() {
 	conn := config.InitDB()
 	config.MigrateDB(conn)
@@ -24,6 +32,7 @@ func main() {
 	aksesBook := entity.AksesBook{DB: conn}
 
 	var input int
+	var input2 int
 	for input != 99 {
 		fmt.Println("\n\tWelcome in RENT BOOKS APP !!\n")
 		fmt.Println("1. Register")
@@ -79,7 +88,36 @@ func main() {
 				fmt.Println("7. Kembalikan Buku")
 				fmt.Println("99. Keluar\n")
 				fmt.Print("Pilih Menu : ")
-				fmt.Scanln(&input)
+				fmt.Scanln(&input2)
+
+				// for input != 99 {
+				switch input2 {
+				case 1:
+					fmt.Println("Profile Anda")
+					for _, val := range aksesUser.GetProfileUser(email) {
+						fmt.Print("ID : ")
+						fmt.Println(val.ID)
+						fmt.Print("Nama : ")
+						fmt.Println(val.Nama)
+						fmt.Print("No HP : ")
+						fmt.Println(val.No_hp)
+						fmt.Print("Email : ")
+						fmt.Println(val.Email)
+
+					}
+				case 3:
+					inputYT := deleteAccount()
+					if inputYT == "YA" {
+						aksesUser.DeleteUser(email)
+						fmt.Println("AKUN BERHASIL DIHAPUS")
+					} else {
+						continue
+					}
+				default:
+					continue
+				}
+
+				// }
 			}
 
 		case 3:
@@ -99,5 +137,5 @@ func main() {
 			continue
 		}
 	}
-	fmt.Println("TERIMA KASIH TELANG MENGGUNAKAN APLIKASI KAMI")
+	fmt.Println("TERIMA KASIH TELAH MENGGUNAKAN APLIKASI KAMI")
 }

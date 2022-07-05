@@ -67,9 +67,36 @@ func (au *AksesUser) GetEmailPass(EmailUser, PassUser string) bool {
 	return true
 }
 
-func (as *AksesUser) GetAllData() []User {
+func (au *AksesUser) GetProfileUser(EmailUser string) []User {
+	var profileUser = []User{}
+	err := au.DB.Where("Email = ?", EmailUser).Find(&profileUser)
+	if err.Error != nil {
+		log.Fatal(err.Statement.SQL.String())
+		return nil
+	}
+
+	return profileUser
+}
+
+func (au *AksesUser) DeleteUser(EmailUser string) bool {
+	postExc := au.DB.Where("Email = ?", EmailUser).Delete(&User{})
+
+	if err := postExc.Error; err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	if aff := postExc.RowsAffected; aff < 1 {
+		log.Println("Gagal Menghapus Akun")
+		return false
+	}
+
+	return true
+}
+
+func (au *AksesUser) GetAllData() []User {
 	var daftarUser = []User{}
-	err := as.DB.Find(&daftarUser)
+	err := au.DB.Find(&daftarUser)
 	if err.Error != nil {
 		log.Fatal(err.Statement.SQL.String())
 		return nil
