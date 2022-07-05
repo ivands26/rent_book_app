@@ -104,13 +104,13 @@ func (au *AksesUser) GetAllData() []User {
 	return daftarUser
 }
 
-/*func (au *AksesUser) UpdateUserNama(EmailUser string, newUserupdate User) User {
-	err := au.DB.Model(&User{}).Where("Email = ?", EmailUser).Update("Nama", newUserupdate.Nama).Error
+func (au *AksesUser) UpdateUserNama(emailUser string, namaUpdate string) int64 {
+	err := au.DB.Model(&User{}).Where("Email = ?", emailUser).Update("Nama", namaUpdate)
 	if err != nil {
-		log.Fatal(err)
-		return User{}
+		// log.Fatal(err)
+		return 0
 	}
-	return newUserupdate
+	return err.RowsAffected
 }
 
 func (au *AksesUser) UpdateUserHP(EmailUser string, newUserupdate User) User {
@@ -139,4 +139,3 @@ func (au *AksesUser) UpdateUserPassword(EmailUser string, newUserupdate User) Us
 	}
 	return newUserupdate
 }
-*/
