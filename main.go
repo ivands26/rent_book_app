@@ -27,6 +27,13 @@ func deleteAccount() int {
 	fmt.Scanln(&inputYT)
 	return inputYT
 }
+
+func cekres(res entity.User) {
+	if res.ID == 0 {
+		fmt.Println("Update failed, try again")
+	}
+	fmt.Println("Update Succes")
+}
 func main() {
 	conn := config.InitDB()
 	config.MigrateDB(conn)
@@ -85,10 +92,12 @@ func main() {
 					fmt.Println("1. My Profile")
 					fmt.Println("2. Edit Profile")
 					fmt.Println("3. Delete Account")
-					fmt.Println("4. Tambahkan Buku")
-					fmt.Println("5. Lihat Buku Saya")
-					fmt.Println("6. Pinjam Buku") //nanti masukin list
-					fmt.Println("7. Kembalikan Buku")
+					fmt.Println("4. Add My Book")
+					fmt.Println("5. Edit My Book")
+					fmt.Println("6. Delete My Book")
+					fmt.Println("6. Rent Book") //harus input id user dan id book
+					fmt.Println("7. Rent Book List")
+					fmt.Println("7. Return Book")
 					fmt.Println("80. Log Out\n")
 					fmt.Print("Pilih Menu : ")
 					fmt.Scanln(&input2)
@@ -110,6 +119,57 @@ func main() {
 							fmt.Print("Pilih Menu : ")
 							fmt.Scanln(&input2)
 						}
+					case 2:
+						var input3 int
+						for input3 != 33 {
+							fmt.Println("\nChoose what you want to edit: ")
+							fmt.Println("1. Nama")
+							fmt.Println("2. No HP")
+							fmt.Println("3. Email")
+							fmt.Println("4. Password")
+							fmt.Println("33. Back to previous page\n")
+							fmt.Print("Choose Menu : ")
+							fmt.Scan(&input3)
+
+							for _, data := range aksesUser.GetProfileUser(email) {
+								var newUserupdate entity.User
+								if input3 == 1 {
+									fmt.Println("Current Name : ", data.Nama)
+									fmt.Print("New Name : ")
+									fmt.Scanln(&newUserupdate.Nama)
+									//res := aksesUser.UpdateUserNama(email, newUserupdate)
+									//if res.ID == 0 {
+									//fmt.Println("Update failed, try again")
+									//} else {
+									//fmt.Println("Update Succes")
+									//}
+								} /*else if input3 == 2 {
+									fmt.Println("Current Phone Number : ", data.No_hp)
+									fmt.Print("New Phone Number : ")
+									fmt.Scanln(&newUserupdate.No_hp)
+									res := aksesUser.UpdateUserHP(email, newUserupdate)
+									cekres(res)
+
+								} else if input3 == 3 {
+									fmt.Println("Current Email : ", data.Email)
+									fmt.Print("New Email : ")
+									fmt.Scanln(&newUserupdate.Email)
+									res := aksesUser.UpdateUserEmail(email, newUserupdate)
+									cekres(res)
+
+								} else if input3 == 4 {
+									fmt.Println("Current Password : ", data.Password)
+									fmt.Print("New Password : ")
+									fmt.Scanln(&newUserupdate.Password)
+									res := aksesUser.UpdateUserPassword(email, newUserupdate)
+									cekres(res)
+
+								} else {
+									break
+								}*/
+							}
+
+						}
 					case 3:
 						inputYT := deleteAccount()
 						if inputYT == 1 {
@@ -122,10 +182,13 @@ func main() {
 
 					case 4:
 						var newBook entity.Book
-						fmt.Print("Book Title: ")
+						fmt.Print("\nMasukkan Book Title: ")
 						fmt.Scanln(&newBook.Judul)
-						fmt.Print("Author : ")
+						fmt.Print("Masukkan Nama Author : ")
 						fmt.Scanln(&newBook.Author)
+						for _, val := range aksesUser.GetProfileUser(email) {
+							newBook.Owned_by = val.Nama
+						}
 						res := aksesBook.InputBook(newBook)
 						if res.ID == 0 {
 							fmt.Println("Buku Gagal Diinput")
@@ -141,11 +204,17 @@ func main() {
 			}
 
 		case 3:
-			fmt.Println("Daftar Buku")
+			fmt.Println("\nDaftar Buku")
 			for _, value := range aksesBook.GetDataBook() {
+
+				fmt.Print("\nTitle\t: ")
 				fmt.Println(value.Judul)
+				fmt.Print("Isbn\t: ")
+				fmt.Println(value.ID_Book)
+				fmt.Print("Author\t: ")
 				fmt.Println(value.Author)
-				fmt.Print("\n")
+				fmt.Print("Owned by: ")
+				fmt.Println(value.Owned_by)
 			}
 
 		case 10:

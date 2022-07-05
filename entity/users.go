@@ -103,3 +103,40 @@ func (au *AksesUser) GetAllData() []User {
 	}
 	return daftarUser
 }
+
+/*func (au *AksesUser) UpdateUserNama(EmailUser string, newUserupdate User) User {
+	err := au.DB.Model(&User{}).Where("Email = ?", EmailUser).Update("Nama", newUserupdate.Nama).Error
+	if err != nil {
+		log.Fatal(err)
+		return User{}
+	}
+	return newUserupdate
+}
+
+func (au *AksesUser) UpdateUserHP(EmailUser string, newUserupdate User) User {
+	err := au.DB.Model(&User{}).Where("Email = ?", EmailUser).Update("No_hp", newUserupdate.No_hp).Error
+	if err != nil {
+		log.Fatal(err)
+		return User{}
+	}
+	return newUserupdate
+}
+
+func (au *AksesUser) UpdateUserEmail(EmailUser string, newUserupdate User) User {
+	err := au.DB.Model(&User{}).Where("Email = ?", EmailUser).Update("Email", newUserupdate.Email).Error
+	if err != nil {
+		log.Fatal(err)
+		return User{}
+	}
+	return newUserupdate
+}
+
+func (au *AksesUser) UpdateUserPassword(EmailUser string, newUserupdate User) User {
+	err := au.DB.Model(&User{}).Where("Email = ?", EmailUser).Update("Password", newUserupdate.Password).Error
+	if err != nil {
+		log.Fatal(err)
+		return User{}
+	}
+	return newUserupdate
+}
+*/

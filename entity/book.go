@@ -3,13 +3,16 @@ package entity
 import (
 	"log"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type Book struct {
 	gorm.Model
-	Judul  string
-	Author string
+	ID_Book  string
+	Judul    string
+	Author   string
+	Owned_by string
 }
 
 type AksesBook struct {
@@ -28,6 +31,8 @@ func (ab *AksesBook) GetDataBook() []Book {
 }
 
 func (ab *AksesBook) InputBook(newBook Book) Book {
+	uid := uuid.New()
+	newBook.ID_Book = uid.String()
 	err := ab.DB.Create(&newBook).Error
 	if err != nil {
 		log.Fatal(err)
