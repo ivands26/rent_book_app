@@ -11,6 +11,7 @@ func main() {
 	conn := config.InitDB()
 	config.MigrateDB(conn)
 	aksesUser := entity.AksesUser{DB: conn}
+	aksesBook := entity.AksesBook{DB: conn}
 
 	var input int
 	for input != 99 {
@@ -55,6 +56,14 @@ func main() {
 				fmt.Println("Login Berhasil")
 			} else if emailauth == false || passauth == false {
 				fmt.Println("Email dan Password tidak sesuai, silahkan coba lagi")
+			}
+
+		case 3:
+			fmt.Println("Daftar Buku")
+			for _, value := range aksesBook.GetDataBook() {
+				fmt.Println(value.Judul)
+				fmt.Println(value.Author)
+				fmt.Print("\n")
 			}
 
 		case 10:
