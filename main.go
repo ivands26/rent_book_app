@@ -28,12 +28,6 @@ func deleteAccount() int {
 	return inputYT
 }
 
-func cekres(res entity.User) {
-	if res.ID == 0 {
-		fmt.Println("Update failed, try again")
-	}
-	fmt.Println("Update Succes")
-}
 func main() {
 	conn := config.InitDB()
 	config.MigrateDB(conn)
@@ -97,7 +91,7 @@ func main() {
 					fmt.Println("6. Delete My Book")
 					fmt.Println("6. Rent Book") //harus input id user dan id book
 					fmt.Println("7. Rent Book List")
-					fmt.Println("7. Return Book")
+					fmt.Println("8. Return Book")
 					fmt.Println("80. Log Out\n")
 					fmt.Print("Pilih Menu : ")
 					fmt.Scanln(&input2)
@@ -120,7 +114,7 @@ func main() {
 							fmt.Scanln(&input2)
 						}
 					case 2:
-						var input3 int
+						var input3 int = 0
 						for input3 != 33 {
 							fmt.Println("\nChoose what you want to edit: ")
 							fmt.Println("1. Nama")
@@ -130,9 +124,15 @@ func main() {
 							fmt.Println("33. Back to previous page\n")
 							fmt.Print("Choose Menu : ")
 							fmt.Scan(&input3)
+							if input3 == 33 {
+								input2 = 55
+							}
 
-							if input3 == 1 {
+							switch input3 {
+
+							case 1:
 								var namaUpdate string
+								fmt.Println("\n-----Update Nama-----")
 								for _, value := range aksesUser.GetProfileUser(email) {
 									fmt.Println("Current Name : ", value.Nama)
 								}
@@ -140,38 +140,62 @@ func main() {
 								fmt.Scanln(&email)
 								fmt.Scanln(&namaUpdate)
 								res := aksesUser.UpdateUserNama(email, namaUpdate)
-								if res == 0 {
+								if res == true {
 									fmt.Println("Update Succes")
 								} else {
 									fmt.Println("Update Failed, Try Again")
 								}
+							case 2:
+								var hpUpdate string
+								fmt.Println("\n-----Update No. HP-----")
+								for _, value := range aksesUser.GetProfileUser(email) {
+									fmt.Println("Current Phone Number : ", value.No_hp)
+								}
+								fmt.Print("New Phone Number : ")
+								fmt.Scanln(&email)
+								fmt.Scanln(&hpUpdate)
+								res := aksesUser.UpdateUserNo(email, hpUpdate)
+								if res == true {
+									fmt.Println("Update Succes")
+								} else {
+									fmt.Println("Update Failed, Try Again")
+								}
+							case 3:
+								var surelUpdate string
+								fmt.Println("\n-----Update Email-----")
+								for _, value := range aksesUser.GetProfileUser(email) {
+									fmt.Println("Current Email : ", value.Email)
+								}
+								fmt.Print("New Email : ")
+								fmt.Scanln(&email)
+								fmt.Scanln(&surelUpdate)
+								res := aksesUser.UpdateUserSurel(email, surelUpdate)
+								if res == true {
+									fmt.Println("Update Succes")
+								} else {
+									fmt.Println("Update Failed, Try Again")
+								}
+							case 4:
+								var PassUpdate string
+								fmt.Println("\n-----Update Password-----")
+								for _, value := range aksesUser.GetProfileUser(email) {
+									fmt.Println("Current Password : ", value.Password)
+								}
+								fmt.Print("New Password : ")
+								fmt.Scanln(&email)
+								fmt.Scanln(&PassUpdate)
+								res := aksesUser.UpdateUserPass(email, PassUpdate)
+
+								if res == true {
+									fmt.Println("Update Succes")
+								} else {
+									fmt.Println("Update Failed, Try Again")
+								}
+							default:
+								continue
 							}
+
 						}
-
-						/*else if input3 == 2 {
-							fmt.Println("Current Phone Number : ", data.No_hp)
-							fmt.Print("New Phone Number : ")
-							fmt.Scanln(&newUserupdate.No_hp)
-							res := aksesUser.UpdateUserHP(email, newUserupdate)
-							cekres(res)
-
-						} else if input3 == 3 {
-							fmt.Println("Current Email : ", data.Email)
-							fmt.Print("New Email : ")
-							fmt.Scanln(&newUserupdate.Email)
-							res := aksesUser.UpdateUserEmail(email, newUserupdate)
-							cekres(res)
-
-						} else if input3 == 4 {
-							fmt.Println("Current Password : ", data.Password)
-							fmt.Print("New Password : ")
-							fmt.Scanln(&newUserupdate.Password)
-							res := aksesUser.UpdateUserPassword(email, newUserupdate)
-							cekres(res)
-
-						} else {
-							break
-						}*/
 
 					case 3:
 						inputYT := deleteAccount()

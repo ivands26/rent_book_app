@@ -104,38 +104,54 @@ func (au *AksesUser) GetAllData() []User {
 	return daftarUser
 }
 
-func (au *AksesUser) UpdateUserNama(emailUser string, namaUpdate string) int64 {
-	err := au.DB.Model(&User{}).Where("Email = ?", emailUser).Update("Nama", namaUpdate)
-	if err != nil {
-		// log.Fatal(err)
-		return 0
+func (au *AksesUser) UpdateUserNama(emailUser string, namaUpdate string) bool {
+	updateExc := au.DB.Model(&User{}).Where("Email = ?", emailUser).Update("Nama", namaUpdate)
+	if err := updateExc.Error; err != nil {
+		log.Fatal(err)
+		return false
 	}
-	return err.RowsAffected
+	if aff := updateExc.RowsAffected; aff < 1 {
+		log.Println("Tidak ada data yang diupdate")
+		return false
+	}
+	return true
 }
 
-func (au *AksesUser) UpdateUserHP(EmailUser string, newUserupdate User) User {
-	err := au.DB.Model(&User{}).Where("Email = ?", EmailUser).Update("No_hp", newUserupdate.No_hp).Error
-	if err != nil {
+func (au *AksesUser) UpdateUserNo(emailUser string, hpUpdate string) bool {
+	updateExc := au.DB.Model(&User{}).Where("Email = ?", emailUser).Update("No_hp", hpUpdate)
+	if err := updateExc.Error; err != nil {
 		log.Fatal(err)
-		return User{}
+		return false
 	}
-	return newUserupdate
+	if aff := updateExc.RowsAffected; aff < 1 {
+		log.Println("Tidak ada data yang diupdate")
+		return false
+	}
+	return true
 }
 
-func (au *AksesUser) UpdateUserEmail(EmailUser string, newUserupdate User) User {
-	err := au.DB.Model(&User{}).Where("Email = ?", EmailUser).Update("Email", newUserupdate.Email).Error
-	if err != nil {
+func (au *AksesUser) UpdateUserSurel(emailUser string, surelUpdate string) bool {
+	updateExc := au.DB.Model(&User{}).Where("Email = ?", emailUser).Update("Email", surelUpdate)
+	if err := updateExc.Error; err != nil {
 		log.Fatal(err)
-		return User{}
+		return false
 	}
-	return newUserupdate
+	if aff := updateExc.RowsAffected; aff < 1 {
+		log.Println("Tidak ada data yang diupdate")
+		return false
+	}
+	return true
 }
 
-func (au *AksesUser) UpdateUserPassword(EmailUser string, newUserupdate User) User {
-	err := au.DB.Model(&User{}).Where("Email = ?", EmailUser).Update("Password", newUserupdate.Password).Error
-	if err != nil {
+func (au *AksesUser) UpdateUserPass(emailUser string, PassUpdate string) bool {
+	updateExc := au.DB.Model(&User{}).Where("Email = ?", emailUser).Update("Password", PassUpdate)
+	if err := updateExc.Error; err != nil {
 		log.Fatal(err)
-		return User{}
+		return false
 	}
-	return newUserupdate
+	if aff := updateExc.RowsAffected; aff < 1 {
+		log.Println("Tidak ada data yang diupdate")
+		return false
+	}
+	return true
 }
