@@ -7,6 +7,16 @@ import (
 	"group_project/entity"
 )
 
+func halamanlogin() (string, string) {
+	var email string
+	var pass string
+	fmt.Println("\n--Login--")
+	fmt.Print("Email: ")
+	fmt.Scanln(&email)
+	fmt.Print("Password: ")
+	fmt.Scanln(&pass)
+	return email, pass
+}
 func main() {
 	conn := config.InitDB()
 	config.MigrateDB(conn)
@@ -43,19 +53,33 @@ func main() {
 			fmt.Println("Registrasi Berhasil\n")
 
 		case 2:
-			var eemail string
-			var pass string
-			fmt.Println("\n--Login--")
-			fmt.Print("Email: ")
-			fmt.Scanln(&eemail)
-			fmt.Print("Password: ")
-			fmt.Scanln(&pass)
-			emailauth := aksesUser.GetUserEmail(eemail)
-			passauth := aksesUser.GetUserPass(eemail, pass)
-			if emailauth == true && passauth == true {
-				fmt.Println("Login Berhasil")
-			} else if emailauth == false || passauth == false {
+			email, pass := halamanlogin()
+			emailauth := aksesUser.GetUserEmail(email)
+			passauth := aksesUser.GetUserPass(pass)
+			emailpassauth := aksesUser.GetEmailPass(email, pass)
+			if emailauth == false && passauth == false {
 				fmt.Println("Email dan Password tidak sesuai, silahkan coba lagi")
+			} else if passauth == false {
+				fmt.Println("Password salah")
+			} else if emailauth == false {
+				fmt.Println("Email tidak terdaftar")
+			} else if emailpassauth == true {
+				fmt.Println("Login Berhasil")
+
+				for _, val := range aksesUser.GetName(email) {
+					fmt.Printf("\n\tWelcome %s !!\n\n", val.Nama)
+				}
+
+				fmt.Println("1. Lihat Profile")
+				fmt.Println("2. Edit Profile")
+				fmt.Println("3. Delete Account")
+				fmt.Println("4. Tambahkan Buku")
+				fmt.Println("5. Lihat Buku Saya")
+				fmt.Println("6. Pinjam Buku") //nanti masukin list
+				fmt.Println("7. Kembalikan Buku")
+				fmt.Println("99. Keluar\n")
+				fmt.Print("Pilih Menu : ")
+				fmt.Scanln(&input)
 			}
 
 		case 3:
