@@ -12,7 +12,8 @@ type User struct {
 	No_hp    string
 	Email    string
 	Password string
-	Buku     []Book `gorm:"foreignKey:Owned_by"`
+	// Buku     []Book `gorm:"foreignKey:Owned_by;many2many:user_books;"`
+	Buku []Book `gorm:"many2many:user_books;"`
 }
 
 type AksesUser struct {
@@ -50,15 +51,15 @@ func (au *AksesUser) GetUserPass(PassUser string) bool {
 	return true
 }
 
-func (au *AksesUser) GetName(EmailUser string) []User {
-	var daftarUser = []User{}
-	err := au.DB.Where("Email = ?", EmailUser).Select("Nama").Find(&daftarUser)
-	if err.Error != nil {
-		log.Fatal(err.Statement.SQL.String())
-		return nil
-	}
-	return daftarUser
-}
+// func (au *AksesUser) GetName(EmailUser string) []User {
+// 	var daftarUser = []User{}
+// 	err := au.DB.Where("Email = ?", EmailUser).Select("Nama").Find(&daftarUser)
+// 	if err.Error != nil {
+// 		log.Fatal(err.Statement.SQL.String())
+// 		return nil
+// 	}
+// 	return daftarUser
+// }
 
 func (au *AksesUser) GetEmailPass(EmailUser, PassUser string) bool {
 	getPass := au.DB.Where("Email = ? and Password = ?", EmailUser, PassUser).First(&User{})

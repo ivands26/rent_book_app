@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 
 	"group_project/config"
 	"group_project/entity"
@@ -47,13 +45,15 @@ func main() {
 	var input int
 	var input2 int
 	for input != 99 {
-		fmt.Println("\n\tWelcome in RENT BOOKS APP !!")
+		fmt.Println("\n\t\t==================================")
+		fmt.Println("\t\t|| Welcome in RENT BOOKS APP !! ||")
+		fmt.Print("\t\t==================================\n\n")
 		fmt.Println("1. Register")
 		fmt.Println("2. Login")
 		fmt.Println("3. Lihat Koleksi Buku")
 		fmt.Println("10. List User")
 		fmt.Println("99. Keluar")
-		fmt.Print("Pilih Menu : ")
+		fmt.Print("\nPilih Menu : ")
 		fmt.Scanln(&input)
 
 		switch input {
@@ -72,7 +72,7 @@ func main() {
 				fmt.Println("Registrasi Gagal")
 				break
 			}
-			fmt.Println("Registrasi Berhasil")
+			fmt.Print("\n--> REGISTRASI BERHASIL <--\n")
 
 		case 2:
 			email, pass = halamanlogin()
@@ -89,19 +89,19 @@ func main() {
 				fmt.Println("Login Berhasil")
 				input2 = 0
 				for input2 != 80 {
-					for _, val := range aksesUser.GetName(email) {
-						fmt.Printf("\n\tWelcome %s !!\n\n", val.Nama)
-					}
+					val := aksesUser.GetProfileUser(email)
+					fmt.Printf("\n\t---Welcome %s !!---\n\n", val.Nama)
 
 					fmt.Println("1. My Profile")
 					fmt.Println("2. Edit Profile")
 					fmt.Println("3. Delete Account")
 					fmt.Println("4. Add My Book")
-					fmt.Println("5. Edit My Book")
-					fmt.Println("6. Delete My Book")
-					fmt.Println("7. Rent Book") //harus input id user dan id book
-					fmt.Println("8. Rent Book List")
-					fmt.Println("9. Return Book")
+					fmt.Println("5. List My Book")
+					fmt.Println("6. Edit My Book")
+					fmt.Println("7. Delete My Book")
+					fmt.Println("8. Rent Book") //harus input id user dan id book
+					fmt.Println("9. Rent Book List")
+					fmt.Println("10. Return Book")
 					fmt.Print("80. Log Out \n\n")
 					fmt.Print("Pilih Menu : ")
 					fmt.Scanln(&input2)
@@ -119,7 +119,7 @@ func main() {
 						fmt.Print("Email\t: ")
 						fmt.Println(val.Email)
 
-						fmt.Println("\n55. Kembali ke menu sebelumnya")
+						fmt.Print("\n55. Kembali ke menu sebelumnya\n\n")
 						fmt.Print("Pilih Menu : ")
 						fmt.Scanln(&input2)
 
@@ -131,87 +131,79 @@ func main() {
 							fmt.Println("2. No HP")
 							fmt.Println("3. Email")
 							fmt.Println("4. Password")
-							fmt.Println("33. Back to previous page")
+							fmt.Print("33. Back to previous page\n\n")
 							fmt.Print("Choose Menu : ")
 							fmt.Scan(&input3)
-							// if input3 == 33 {
-							// 	input2 = 55
-							// }
-							if input3 == 1 {
+							if input3 == 33 {
+								input2 = 55
+							}
 
-								// var namaUpdate string
+							switch input3 {
+
+							case 1:
+								var namaUpdate string
 								fmt.Println("\n-----Update Nama-----")
 								val := aksesUser.GetProfileUser(email)
 								fmt.Println("Current Name : ", val.Nama)
 								fmt.Print("New Name : ")
-								in := bufio.NewReader(os.Stdin)
-								line, _ := in.ReadString('\n')
-								// fmt.Scanln(&input2)
-								// fmt.Scanln(&namaUpdate)
-								res := aksesUser.UpdateUserNama(email, line)
+								fmt.Scanln(&input2)
+								fmt.Scanln(&namaUpdate)
+								res := aksesUser.UpdateUserNama(email, namaUpdate)
 								if res == true {
 									fmt.Println("Update Succes")
 								} else {
 									fmt.Println("Update Failed, Try Again")
 								}
-							} else if input3 == 33 {
-								input2 = 55
+
+							case 2:
+								var hpUpdate string
+								fmt.Println("\n-----Update No. HP-----")
+								val := aksesUser.GetProfileUser(email)
+								fmt.Println("Current Phone Number : ", val.No_hp)
+								fmt.Print("New Phone Number : ")
+								fmt.Scanln(&email)
+								fmt.Scanln(&hpUpdate)
+								res := aksesUser.UpdateUserNo(email, hpUpdate)
+								if res == true {
+									fmt.Println("Update Succes")
+								} else {
+									fmt.Println("Update Failed, Try Again")
+								}
+
+							case 3:
+								var surelUpdate string
+								fmt.Println("\n-----Update Email-----")
+								val := aksesUser.GetProfileUser(email)
+								fmt.Println("Current Email : ", val.Email)
+								fmt.Print("New Email : ")
+								fmt.Scanln(&email)
+								fmt.Scanln(&surelUpdate)
+								res := aksesUser.UpdateUserSurel(email, surelUpdate)
+								if res == true {
+									fmt.Print("Update Success, kembali ke halaman utama, silahkan login kembali\n\n")
+									input3 = 33
+									input2 = 80
+									break
+								} else {
+									fmt.Println("Update Failed, Try Again")
+								}
+							case 4:
+								var PassUpdate string
+								fmt.Println("\n-----Update Password-----")
+								val := aksesUser.GetProfileUser(email)
+								fmt.Println("Current Password : ", val.Password)
+								fmt.Print("New Password : ")
+								fmt.Scanln(&email)
+								fmt.Scanln(&PassUpdate)
+								res := aksesUser.UpdateUserPass(email, PassUpdate)
+								if res == true {
+									fmt.Println("Update Succes")
+								} else {
+									fmt.Println("Update Failed, Try Again")
+								}
+							default:
+								continue
 							}
-							// switch input3 {
-
-							// case 1:
-							// case 2:
-							// 	var hpUpdate string
-							// 	fmt.Println("\n-----Update No. HP-----")
-							// 	for _, value := range aksesUser.GetProfileUser(email) {
-							// 		fmt.Println("Current Phone Number : ", value.No_hp)
-							// 	}
-							// 	fmt.Print("New Phone Number : ")
-							// 	fmt.Scanln(&email)
-							// 	fmt.Scanln(&hpUpdate)
-							// 	res := aksesUser.UpdateUserNo(email, hpUpdate)
-							// 	if res == true {
-							// 		fmt.Println("Update Succes")
-							// 	} else {
-							// 		fmt.Println("Update Failed, Try Again")
-							// 	}
-							// case 3:
-							// 	var surelUpdate string
-							// 	fmt.Println("\n-----Update Email-----")
-							// 	for _, value := range aksesUser.GetProfileUser(email) {
-							// 		fmt.Println("Current Email : ", value.Email)
-							// 	}
-							// 	fmt.Print("New Email : ")
-							// 	fmt.Scanln(&email)
-							// 	fmt.Scanln(&surelUpdate)
-							// 	res := aksesUser.UpdateUserSurel(email, surelUpdate)
-							// 	if res == true {
-							// 		fmt.Println("Update Succes")
-							// 	} else {
-							// 		fmt.Println("Update Failed, Try Again")
-							// 	}
-							// case 4:
-							// 	var PassUpdate string
-							// 	fmt.Println("\n-----Update Password-----")
-							// 	for _, value := range aksesUser.GetProfileUser(email) {
-							// 		fmt.Println("Current Password : ", value.Password)
-							// 	}
-							// 	fmt.Print("New Password : ")
-							// 	fmt.Scanln(&email)
-							// 	fmt.Scanln(&PassUpdate)
-							// 	res := aksesUser.UpdateUserPass(email, PassUpdate)
-
-							// 	if res == true {
-							// 		fmt.Println("Update Succes")
-							// 	} else {
-							// 		fmt.Println("Update Failed, Try Again")
-							// 	}
-							// case 33:
-							// 	input2 = 55
-
-							// default:
-							// 	continue
-							// }
 
 						}
 
@@ -233,17 +225,45 @@ func main() {
 						fmt.Scanln(&newBook.Author)
 						val := aksesUser.GetProfileUser(email)
 						newBook.Owned_by = val.ID
-
-						aksesBook.InputBook(newBook)
-						// if res.ID == 0 {
-						// 	fmt.Println("Buku Gagal Diinput")
-						// 	break
-						// }
+						res := aksesBook.InputBook(newBook)
+						if res.ID == 0 {
+							fmt.Println("Buku Gagal Diinput")
+							break
+						}
 						fmt.Println("Buku Berhasil Diinput")
 
-					case 6:
+					case 7:
 						inputBook := deleteBook()
 						fmt.Println(aksesBook.DeleteBook(inputBook))
+					case 8:
+						var IDbuku int
+						fmt.Print("\n------Rent Book------\n\n")
+						fmt.Print("Available Book For Rent")
+						for _, value := range aksesBook.GetDataBook() {
+							fmt.Print("\nID Book\t: ")
+							fmt.Println(value.ID)
+							fmt.Print("Title\t: ")
+							fmt.Println(value.Judul)
+							fmt.Print("Isbn\t: ")
+							fmt.Println(value.ISBN)
+							fmt.Print("Author\t: ")
+							fmt.Println(value.Author)
+							fmt.Print("Owned by: ")
+							fmt.Println(value.Owned_by)
+
+							fmt.Print("\nMasukkan ID Book yang ingin dipinjam: ")
+							fmt.Scanln(&IDbuku)
+
+							//res := UpdateRent(email, IDbuku)
+							// 	if res == true {
+							// 		fmt.Println("Update Succes")
+							// 	} else {
+							// 		fmt.Println("Update Failed, Try Again")
+							// 	}
+							// 	fmt.Print("\nBerhasil meminjam buku, durasi peminjaman buku adalah 7 hari, silahkan kembalikan tepat waktu !")
+
+						}
+
 					default:
 						continue
 					}

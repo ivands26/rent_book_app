@@ -13,6 +13,7 @@ type Book struct {
 	Judul    string
 	Author   string
 	Owned_by uint
+	User     []User `gorm:"many2many:user_books;"`
 }
 
 type AksesBook struct {
@@ -29,6 +30,18 @@ func (ab *AksesBook) GetDataBook() []Book {
 
 	return daftarBook
 }
+
+/*func (ab *AksesBook) GetDataBook() []Book {
+	var daftarBook = []Book{}
+	err := ab.DB.Model(&User{}).Select("Judul,ISBN,Author,Owned_by").Joins("left join emails on emails.user_id = users.id").Find(&daftarBook)
+	if err.Error != nil {
+	  log.Fatal(err.Statement.SQL.String())
+	  return nil
+	}
+
+	return daftarBook
+}
+*/
 
 func (ab *AksesBook) InputBook(newBook Book) Book {
 	uid := uuid.New()
