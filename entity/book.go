@@ -9,7 +9,7 @@ import (
 
 type Book struct {
 	gorm.Model
-	ID_Book  string
+	ID       string
 	Judul    string
 	Author   string
 	Owned_by string
@@ -32,7 +32,7 @@ func (ab *AksesBook) GetDataBook() []Book {
 
 func (ab *AksesBook) InputBook(newBook Book) Book {
 	uid := uuid.New()
-	newBook.ID_Book = uid.String()
+	newBook.ID = uid.String()
 	err := ab.DB.Create(&newBook).Error
 	if err != nil {
 		log.Fatal(err)
@@ -40,4 +40,16 @@ func (ab *AksesBook) InputBook(newBook Book) Book {
 	}
 
 	return newBook
+}
+
+func (ab *AksesBook) DeleteBook(IDBook int) bool {
+	postExc := ab.DB.Where("ID = ?", IDBook).Delete(&Book{})
+	if err := postExc.Error; err != nil {
+		log.Fatal(err)
+		return false
+	}
+	if aff := postExc.RowsAffected; aff < 1 {
+		log.Println("Gagal menghapus buku")
+	}
+	return true
 }

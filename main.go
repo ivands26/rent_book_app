@@ -28,6 +28,13 @@ func deleteAccount() int {
 	return inputYT
 }
 
+func deleteBook() int {
+	var inputBook int
+	fmt.Println("\nMasukkan ID buku yang ingin anda hapus")
+	fmt.Scanln(&inputBook)
+	return inputBook
+}
+
 func main() {
 	conn := config.InitDB()
 	config.MigrateDB(conn)
@@ -89,9 +96,9 @@ func main() {
 					fmt.Println("4. Add My Book")
 					fmt.Println("5. Edit My Book")
 					fmt.Println("6. Delete My Book")
-					fmt.Println("6. Rent Book") //harus input id user dan id book
-					fmt.Println("7. Rent Book List")
-					fmt.Println("8. Return Book")
+					fmt.Println("7. Rent Book") //harus input id user dan id book
+					fmt.Println("8. Rent Book List")
+					fmt.Println("9. Return Book")
 					fmt.Println("80. Log Out\n")
 					fmt.Print("Pilih Menu : ")
 					fmt.Scanln(&input2)
@@ -216,13 +223,16 @@ func main() {
 						for _, val := range aksesUser.GetProfileUser(email) {
 							newBook.Owned_by = val.Nama
 						}
-						res := aksesBook.InputBook(newBook)
+						aksesBook.InputBook(newBook)
 						if res.ID == 0 {
 							fmt.Println("Buku Gagal Diinput")
 							break
 						}
 						fmt.Println("Buku Berhasil Diinput\n")
 
+					case 6:
+						inputBook := deleteBook()
+						fmt.Println(aksesBook.DeleteBook(inputBook))
 					default:
 						continue
 					}
@@ -237,7 +247,7 @@ func main() {
 				fmt.Print("\nTitle\t: ")
 				fmt.Println(value.Judul)
 				fmt.Print("Isbn\t: ")
-				fmt.Println(value.ID_Book)
+				fmt.Println(value.ID)
 				fmt.Print("Author\t: ")
 				fmt.Println(value.Author)
 				fmt.Print("Owned by: ")
