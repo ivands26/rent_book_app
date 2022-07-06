@@ -9,10 +9,10 @@ import (
 
 type Book struct {
 	gorm.Model
-	ID       string
+	ISBN     string
 	Judul    string
 	Author   string
-	Owned_by string
+	Owned_by uint
 }
 
 type AksesBook struct {
@@ -32,7 +32,7 @@ func (ab *AksesBook) GetDataBook() []Book {
 
 func (ab *AksesBook) InputBook(newBook Book) Book {
 	uid := uuid.New()
-	newBook.ID = uid.String()
+	newBook.ISBN = uid.String()
 	err := ab.DB.Create(&newBook).Error
 	if err != nil {
 		log.Fatal(err)

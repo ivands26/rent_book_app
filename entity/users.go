@@ -12,6 +12,7 @@ type User struct {
 	No_hp    string
 	Email    string
 	Password string
+	Buku     []Book `gorm:"foreignKey:Owned_by"`
 }
 
 type AksesUser struct {
@@ -67,12 +68,12 @@ func (au *AksesUser) GetEmailPass(EmailUser, PassUser string) bool {
 	return true
 }
 
-func (au *AksesUser) GetProfileUser(EmailUser string) []User {
-	var profileUser = []User{}
-	err := au.DB.Where("Email = ?", EmailUser).Find(&profileUser)
+func (au *AksesUser) GetProfileUser(EmailUser string) User {
+	var profileUser = User{}
+	err := au.DB.Where("Email = ?", EmailUser).First(&profileUser)
 	if err.Error != nil {
 		log.Fatal(err.Statement.SQL.String())
-		return nil
+		return profileUser
 	}
 
 	return profileUser
