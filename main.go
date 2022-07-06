@@ -151,6 +151,7 @@ func main() {
 	config.MigrateDB(conn)
 	aksesUser := entity.AksesUser{DB: conn}
 	aksesBook := entity.AksesBook{DB: conn}
+	//aksesRent := entity.AksesRent{DB: conn}
 
 	var email, pass string
 	var input int
@@ -253,12 +254,25 @@ func main() {
 							break
 						}
 						fmt.Println("Buku Berhasil Diinput")
-
+					case 5:
+						fmt.Print("\n------List My Book-----\n\n")
+						for _, val := range aksesBook.GetMyBook(email) {
+							fmt.Print("\nID Book\t: ")
+							fmt.Println(val.ID)
+							fmt.Print("Title\t: ")
+							fmt.Println(val.Judul)
+							fmt.Print("Isbn\t: ")
+							fmt.Println(val.ISBN)
+							fmt.Print("Author\t: ")
+							fmt.Println(val.Author)
+						}
+						fmt.Print("\n55. Kembali ke menu sebelumnya\n\n")
+						fmt.Print("Pilih Menu : ")
+						fmt.Scanln(&input2)
 					case 7:
 						inputBook := deleteBook()
 						fmt.Println(aksesBook.DeleteBook(inputBook))
 					case 8:
-						var IDbuku int
 						fmt.Print("\n------Rent Book------\n\n")
 						fmt.Print("Available Book For Rent")
 						for _, value := range aksesBook.GetDataBook() {
@@ -273,14 +287,14 @@ func main() {
 							fmt.Print("Owned by: ")
 							fmt.Println(value.Owned_by)
 
-							fmt.Print("\nMasukkan ID Book yang ingin dipinjam: ")
-							fmt.Scanln(&IDbuku)
+							//var newRent entity.Rent
 
-							// res := UpdateRent(email, IDbuku)
-							// if res == true {
-							// 	fmt.Println("Update Succes")
-							// } else {
-							// 	fmt.Println("Update Failed, Try Again")
+							fmt.Print("\nMasukkan ID Book yang ingin dipinjam: ")
+							//fmt.Scanln(&newRent.Book_id)
+							// res := aksesRent.PinjemBuku(newRent)
+							// if res.ID == 0 {
+							// 	fmt.Println("Pinjam Gagal")
+							// 	break
 							// }
 							// fmt.Print("\nBerhasil meminjam buku, durasi peminjaman buku adalah 7 hari, silahkan kembalikan tepat waktu !")
 

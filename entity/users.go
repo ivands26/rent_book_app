@@ -12,8 +12,9 @@ type User struct {
 	No_hp    string
 	Email    string
 	Password string
-	// Buku     []Book `gorm:"foreignKey:Owned_by;many2many:user_books;"`
-	Buku []Book `gorm:"many2many:user_books;"`
+	Books    []Book `gorm:"foreignKey:Owned_by;"` //user punya banyak buku
+	//Rent     []Rent `gorm:"foreignKey:ID;"` //user bisa pinjem banyak buku
+	//Buku []Book `gorm:"many2many:user_books;"`
 }
 
 type AksesUser struct {
@@ -147,3 +148,17 @@ func (au *AksesUser) UpdateUserPass(emailUser string, PassUpdate string) bool {
 	}
 	return true
 }
+
+// func UpdateRent(au *AksesUserBook) (emailUser string, idbuku int) {
+// 	var daftarBook []Book
+// 	updateExc := au.DB.Preload("User").Where("Email = ?", emailUserFind(&daftarBook)
+// 	if err := updateExc.Error; err != nil {
+// 		log.Fatal(err)
+// 		return false
+// 	}
+// 	if aff := updateExc.RowsAffected; aff < 1 {
+// 		log.Println("Tidak ada data yang diupdate")
+// 		return false
+// 	}
+// 	return true
+// }

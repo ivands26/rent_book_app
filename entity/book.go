@@ -13,7 +13,8 @@ type Book struct {
 	Judul    string
 	Author   string
 	Owned_by uint
-	User     []User `gorm:"many2many:user_books;"`
+	//Rent     []Rent `gorm:"foreignKey:ID;"` //Buku bisa di pinjem banyak user
+	Users []User `gorm:"many2many:user_books;"`
 }
 
 type AksesBook struct {
@@ -65,4 +66,15 @@ func (ab *AksesBook) DeleteBook(IDBook int) bool {
 		log.Println("Gagal menghapus buku")
 	}
 	return true
+}
+
+func (ab *AksesBook) GetMyBook(emailUser string) []Book {
+	var result = []Book{}
+	err := ab.DB.Model(&Book{}).Select("books.ID, books.Judul, books.ISBN, books.Author, users.Nama").Joins("left join users on users.id = books.owned_by").Where("Email = ?", emailUser).Scan(&result)
+	if err.Error != nil {
+		log.Fatal(err.Statement.SQL.String())
+		return nil
+	}
+
+	return result
 }
