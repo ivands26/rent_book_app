@@ -51,16 +51,6 @@ func (au *AksesUser) GetUserPass(PassUser string) bool {
 	return true
 }
 
-// func (au *AksesUser) GetName(EmailUser string) []User {
-// 	var daftarUser = []User{}
-// 	err := au.DB.Where("Email = ?", EmailUser).Select("Nama").Find(&daftarUser)
-// 	if err.Error != nil {
-// 		log.Fatal(err.Statement.SQL.String())
-// 		return nil
-// 	}
-// 	return daftarUser
-// }
-
 func (au *AksesUser) GetEmailPass(EmailUser, PassUser string) bool {
 	getPass := au.DB.Where("Email = ? and Password = ?", EmailUser, PassUser).First(&User{})
 	if err := getPass.Error; err != nil {

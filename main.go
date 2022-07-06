@@ -7,6 +7,19 @@ import (
 	"group_project/entity"
 )
 
+func halamanregis() entity.User {
+	var newUser entity.User
+	fmt.Print("\nMasukan Nama: ")
+	fmt.Scanln(&newUser.Nama)
+	fmt.Print("Masukan No HP: ")
+	fmt.Scanln(&newUser.No_hp)
+	fmt.Print("Masukan Email: ")
+	fmt.Scanln(&newUser.Email)
+	fmt.Print("Masukan Password: ")
+	fmt.Scanln(&newUser.Password)
+	return newUser
+}
+
 func halamanlogin() (string, string) {
 	var email string
 	var pass string
@@ -18,7 +31,105 @@ func halamanlogin() (string, string) {
 	return email, pass
 }
 
-func deleteAccount() int {
+func validasiemailpass(emailauth, passauth, emailpassauth bool) bool {
+	var has bool
+	if !emailauth && !passauth {
+		fmt.Println("Email dan Password tidak sesuai, silahkan coba lagi")
+		has = false
+	} else if !passauth {
+		fmt.Println("Password salah")
+		has = false
+	} else if !emailauth {
+		fmt.Println("Email tidak terdaftar")
+		has = false
+	} else if emailpassauth == true {
+		fmt.Println("Login Berhasil")
+		has = true
+	}
+	return has
+}
+
+func halamaneditprofile() {
+	fmt.Println("\nChoose what you want to edit: ")
+	fmt.Println("1. Nama")
+	fmt.Println("2. No HP")
+	fmt.Println("3. Email")
+	fmt.Println("4. Password")
+	fmt.Print("33. Back to previous page\n\n")
+}
+
+func halamaneditprofile2(email string, input2 int, input3 int) (int, int) {
+	conn := config.InitDB()
+	aksesUser := entity.AksesUser{DB: conn}
+
+	switch input3 {
+	case 1:
+		var namaUpdate string
+		fmt.Println("\n-----Update Nama-----")
+		val := aksesUser.GetProfileUser(email)
+		fmt.Println("Current Name : ", val.Nama)
+		fmt.Print("New Name : ")
+		fmt.Scanln(&email)
+		fmt.Scanln(&namaUpdate)
+		res := aksesUser.UpdateUserNama(email, namaUpdate)
+		if res == true {
+			fmt.Println("Update Succes")
+		} else {
+			fmt.Println("Update Failed, Try Again")
+		}
+
+	case 2:
+		var hpUpdate string
+		fmt.Println("\n-----Update No. HP-----")
+		val := aksesUser.GetProfileUser(email)
+		fmt.Println("Current Phone Number : ", val.No_hp)
+		fmt.Print("New Phone Number : ")
+		fmt.Scanln(&email)
+		fmt.Scanln(&hpUpdate)
+		res := aksesUser.UpdateUserNo(email, hpUpdate)
+		if res == true {
+			fmt.Println("Update Succes")
+		} else {
+			fmt.Println("Update Failed, Try Again")
+		}
+
+	case 3:
+		var surelUpdate string
+		fmt.Println("\n-----Update Email-----")
+		val := aksesUser.GetProfileUser(email)
+		fmt.Println("Current Email : ", val.Email)
+		fmt.Print("New Email : ")
+		fmt.Scanln(&email)
+		fmt.Scanln(&surelUpdate)
+		res := aksesUser.UpdateUserSurel(email, surelUpdate)
+		if res == true {
+			fmt.Print("Update Berhasil, anda akan kembali ke halaman utama, silahkan login kembali\n\n")
+			input3 = 33
+			input2 = 80
+			break
+		} else {
+			fmt.Println("Update Failed, Try Again")
+		}
+	case 4:
+		var PassUpdate string
+		fmt.Println("\n-----Update Password-----")
+		val := aksesUser.GetProfileUser(email)
+		fmt.Println("Current Password : ", val.Password)
+		fmt.Print("New Password : ")
+		fmt.Scanln(&email)
+		fmt.Scanln(&PassUpdate)
+		res := aksesUser.UpdateUserPass(email, PassUpdate)
+		if res == true {
+			fmt.Println("Update Succes")
+		} else {
+			fmt.Println("Update Failed, Try Again")
+		}
+		//default:
+		//	continue
+	}
+	return input3, input2
+}
+func halamandeleteaccount() int {
 	var inputYT int
 	fmt.Println("\nApakah anda yakin ingin menghapus akun anda ?")
 	fmt.Println("1. Ya dan kembali ke halaman utama")
@@ -40,8 +151,8 @@ func main() {
 	config.MigrateDB(conn)
 	aksesUser := entity.AksesUser{DB: conn}
 	aksesBook := entity.AksesBook{DB: conn}
-	var email, pass string
 
+	var email, pass string
 	var input int
 	var input2 int
 	for input != 99 {
@@ -58,15 +169,7 @@ func main() {
 
 		switch input {
 		case 1:
-			var newUser entity.User
-			fmt.Print("\nMasukan Nama: ")
-			fmt.Scanln(&newUser.Nama)
-			fmt.Print("Masukan No HP: ")
-			fmt.Scanln(&newUser.No_hp)
-			fmt.Print("Masukan Email: ")
-			fmt.Scanln(&newUser.Email)
-			fmt.Print("Masukan Password: ")
-			fmt.Scanln(&newUser.Password)
+			newUser := halamanregis()
 			res := aksesUser.RegisUser(newUser)
 			if res.ID == 0 {
 				fmt.Println("Registrasi Gagal")
@@ -79,19 +182,12 @@ func main() {
 			emailauth := aksesUser.GetUserEmail(email)
 			passauth := aksesUser.GetUserPass(pass)
 			emailpassauth := aksesUser.GetEmailPass(email, pass)
-			if !emailauth && !passauth {
-				fmt.Println("Email dan Password tidak sesuai, silahkan coba lagi")
-			} else if passauth == false {
-				fmt.Println("Password salah")
-			} else if emailauth == false {
-				fmt.Println("Email tidak terdaftar")
-			} else if emailpassauth == true {
-				fmt.Println("Login Berhasil")
+			cek := validasiemailpass(emailauth, passauth, emailpassauth)
+			if cek == true {
 				input2 = 0
 				for input2 != 80 {
 					val := aksesUser.GetProfileUser(email)
 					fmt.Printf("\n\t---Welcome %s !!---\n\n", val.Nama)
-
 					fmt.Println("1. My Profile")
 					fmt.Println("2. Edit Profile")
 					fmt.Println("3. Delete Account")
@@ -108,8 +204,8 @@ func main() {
 
 					switch input2 {
 					case 1:
+						val = aksesUser.GetProfileUser(email)
 						fmt.Println("\nProfile")
-						val := aksesUser.GetProfileUser(email)
 						fmt.Print("ID\t: ")
 						fmt.Println(val.ID)
 						fmt.Print("Nama\t: ")
@@ -118,7 +214,6 @@ func main() {
 						fmt.Println(val.No_hp)
 						fmt.Print("Email\t: ")
 						fmt.Println(val.Email)
-
 						fmt.Print("\n55. Kembali ke menu sebelumnya\n\n")
 						fmt.Print("Pilih Menu : ")
 						fmt.Scanln(&input2)
@@ -126,89 +221,16 @@ func main() {
 					case 2:
 						var input3 int = 0
 						for input3 != 33 {
-							fmt.Println("\nChoose what you want to edit: ")
-							fmt.Println("1. Nama")
-							fmt.Println("2. No HP")
-							fmt.Println("3. Email")
-							fmt.Println("4. Password")
-							fmt.Print("33. Back to previous page\n\n")
+							halamaneditprofile()
 							fmt.Print("Choose Menu : ")
 							fmt.Scan(&input3)
 							if input3 == 33 {
 								input2 = 55
 							}
-
-							switch input3 {
-
-							case 1:
-								var namaUpdate string
-								fmt.Println("\n-----Update Nama-----")
-								val := aksesUser.GetProfileUser(email)
-								fmt.Println("Current Name : ", val.Nama)
-								fmt.Print("New Name : ")
-								fmt.Scanln(&input2)
-								fmt.Scanln(&namaUpdate)
-								res := aksesUser.UpdateUserNama(email, namaUpdate)
-								if res == true {
-									fmt.Println("Update Succes")
-								} else {
-									fmt.Println("Update Failed, Try Again")
-								}
-
-							case 2:
-								var hpUpdate string
-								fmt.Println("\n-----Update No. HP-----")
-								val := aksesUser.GetProfileUser(email)
-								fmt.Println("Current Phone Number : ", val.No_hp)
-								fmt.Print("New Phone Number : ")
-								fmt.Scanln(&email)
-								fmt.Scanln(&hpUpdate)
-								res := aksesUser.UpdateUserNo(email, hpUpdate)
-								if res == true {
-									fmt.Println("Update Succes")
-								} else {
-									fmt.Println("Update Failed, Try Again")
-								}
-
-							case 3:
-								var surelUpdate string
-								fmt.Println("\n-----Update Email-----")
-								val := aksesUser.GetProfileUser(email)
-								fmt.Println("Current Email : ", val.Email)
-								fmt.Print("New Email : ")
-								fmt.Scanln(&email)
-								fmt.Scanln(&surelUpdate)
-								res := aksesUser.UpdateUserSurel(email, surelUpdate)
-								if res == true {
-									fmt.Print("Update Success, kembali ke halaman utama, silahkan login kembali\n\n")
-									input3 = 33
-									input2 = 80
-									break
-								} else {
-									fmt.Println("Update Failed, Try Again")
-								}
-							case 4:
-								var PassUpdate string
-								fmt.Println("\n-----Update Password-----")
-								val := aksesUser.GetProfileUser(email)
-								fmt.Println("Current Password : ", val.Password)
-								fmt.Print("New Password : ")
-								fmt.Scanln(&email)
-								fmt.Scanln(&PassUpdate)
-								res := aksesUser.UpdateUserPass(email, PassUpdate)
-								if res == true {
-									fmt.Println("Update Succes")
-								} else {
-									fmt.Println("Update Failed, Try Again")
-								}
-							default:
-								continue
-							}
-
+							input3, input2 = halamaneditprofile2(email, input2, input3)
 						}
-
 					case 3:
-						inputYT := deleteAccount()
+						inputYT := halamandeleteaccount()
 						if inputYT == 1 {
 							aksesUser.DeleteUser(email)
 							fmt.Println("\nAKUN BERHASIL DIHAPUS")
@@ -254,13 +276,13 @@ func main() {
 							fmt.Print("\nMasukkan ID Book yang ingin dipinjam: ")
 							fmt.Scanln(&IDbuku)
 
-							//res := UpdateRent(email, IDbuku)
-							// 	if res == true {
-							// 		fmt.Println("Update Succes")
-							// 	} else {
-							// 		fmt.Println("Update Failed, Try Again")
-							// 	}
-							// 	fmt.Print("\nBerhasil meminjam buku, durasi peminjaman buku adalah 7 hari, silahkan kembalikan tepat waktu !")
+							// res := UpdateRent(email, IDbuku)
+							// if res == true {
+							// 	fmt.Println("Update Succes")
+							// } else {
+							// 	fmt.Println("Update Failed, Try Again")
+							// }
+							// fmt.Print("\nBerhasil meminjam buku, durasi peminjaman buku adalah 7 hari, silahkan kembalikan tepat waktu !")
 
 						}
 
@@ -270,15 +292,16 @@ func main() {
 
 				}
 			}
-
 		case 3:
 			fmt.Println("\nDaftar Buku")
 			for _, value := range aksesBook.GetDataBook() {
 
-				fmt.Print("\nTitle\t: ")
+				fmt.Print("\nID Book\t: ")
+				fmt.Println(value.ID)
+				fmt.Print("Title\t: ")
 				fmt.Println(value.Judul)
 				fmt.Print("Isbn\t: ")
-				fmt.Println(value.ID)
+				fmt.Println(value.ISBN)
 				fmt.Print("Author\t: ")
 				fmt.Println(value.Author)
 				fmt.Print("Owned by: ")
