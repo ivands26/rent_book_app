@@ -10,9 +10,9 @@ type User struct {
 	gorm.Model
 	Nama     string
 	No_hp    string
-	Email    string
+	Email    string `gorm:"unique"`
 	Password string
-	Books    []Book `gorm:"foreignKey:Owned_by;"` //user punya banyak buku
+	Books    []Book `gorm:"foreignKey:Owned_by;OnUpdate:CASCADE,OnDelete:SET NULL"` //user punya banyak buku
 	// Rent     []Rent `gorm:"foreignKey:User_id"`
 	//Rent     []Rent `gorm:"foreignKey:ID;"` //user bisa pinjem banyak buku
 	//Buku []Book `gorm:"many2many:user_books;"`
