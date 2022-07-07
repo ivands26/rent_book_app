@@ -13,8 +13,9 @@ type Book struct {
 	Judul    string
 	Author   string
 	Owned_by uint
+	// Rent     []Rent `gorm:"foreignKey:Book_id"`
 	//Rent     []Rent `gorm:"foreignKey:ID;"` //Buku bisa di pinjem banyak user
-	Users []User `gorm:"many2many:user_books;"`
+	// Users []User `gorm:"many2many:user_books;"`
 }
 
 type AksesBook struct {
@@ -77,4 +78,41 @@ func (ab *AksesBook) GetMyBook(emailUser string) []Book {
 	}
 
 	return result
+}
+
+func (ab *AksesBook) UpdateBook(emailUser string, judulUpdate string, authorUpdate string) bool {
+	updateExc := ab.DB.Model(&Book{}).Where("Email = ?", emailUser).Updates(Book{Judul: judulUpdate, Author: authorUpdate})
+	if err := updateExc.Error; err != nil {
+		log.Fatal(err)
+		return false
+	}
+	if aff := updateExc.RowsAffected; aff < 1 {
+		log.Println("Tidak ada data yang diupdate")
+		return false
+	}
+	return true
+}
+
+func (ab *AksesBook) GetBookJA(emailUser string) []Book {
+	var daftarBook = []Book{}
+	err := ab.DB.Where("Email = ?", emailUser).Find(&daftarBook)
+	if err.Error != nil {
+		log.Fatal(err.Statement.SQL.String())
+		return nil
+	}
+
+	return daftarBook
+}
+
+func (ab *AksesBook) UpdateBookJA(id int, judulUpdate string, authorUpdate string) bool {
+	updateExc := ab.DB.Model(&Book{}).Where("ID = ?", id).Updates(Book{Judul: judulUpdate, Author: authorUpdate})
+	if err := updateExc.Error; err != nil {
+		log.Fatal(err)
+		return false
+	}
+	if aff := updateExc.RowsAffected; aff < 1 {
+		log.Println("Tidak ada data yang diupdate")
+		return false
+	}
+	return true
 }

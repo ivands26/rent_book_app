@@ -141,7 +141,7 @@ func halamandeleteaccount() int {
 
 func deleteBook() int {
 	var inputBook int
-	fmt.Println("\nMasukkan ID buku yang ingin anda hapus")
+	fmt.Print("\nMasukkan ID buku yang ingin anda hapus : ")
 	fmt.Scanln(&inputBook)
 	return inputBook
 }
@@ -151,7 +151,7 @@ func main() {
 	config.MigrateDB(conn)
 	aksesUser := entity.AksesUser{DB: conn}
 	aksesBook := entity.AksesBook{DB: conn}
-	//aksesRent := entity.AksesRent{DB: conn}
+	aksesRent := entity.AksesRent{DB: conn}
 
 	var email, pass string
 	var input int
@@ -269,9 +269,53 @@ func main() {
 						fmt.Print("\n55. Kembali ke menu sebelumnya\n\n")
 						fmt.Print("Pilih Menu : ")
 						fmt.Scanln(&input2)
+					case 6:
+						var judulUpdate string
+						var authorUpdate string
+						var id int
+						fmt.Println("\n-----Update Buku-----")
+						for _, val := range aksesBook.GetMyBook(email) {
+							fmt.Print("\nID Book\t: ")
+							fmt.Println(val.ID)
+							fmt.Print("Title\t: ")
+							fmt.Println(val.Judul)
+							fmt.Print("Isbn\t: ")
+							fmt.Println(val.ISBN)
+							fmt.Print("Author\t: ")
+							fmt.Println(val.Author)
+						}
+						fmt.Print("\nMasukkan ID Buku : ")
+						fmt.Scanln(&id)
+						fmt.Print("New Judul : ")
+						fmt.Scanln(&judulUpdate)
+						fmt.Print("New Author : ")
+						fmt.Scanln(&authorUpdate)
+						res := aksesBook.UpdateBookJA(id, judulUpdate, authorUpdate)
+						if !res {
+							fmt.Println("Update Failed, Try Again")
+						} else {
+							fmt.Println("Update Succes")
+						}
+
 					case 7:
+						fmt.Println("\n-----Delete Buku-----")
+						for _, val := range aksesBook.GetMyBook(email) {
+							fmt.Print("\nID Book\t: ")
+							fmt.Println(val.ID)
+							fmt.Print("Title\t: ")
+							fmt.Println(val.Judul)
+							fmt.Print("Isbn\t: ")
+							fmt.Println(val.ISBN)
+							fmt.Print("Author\t: ")
+							fmt.Println(val.Author)
+						}
 						inputBook := deleteBook()
-						fmt.Println(aksesBook.DeleteBook(inputBook))
+						res := aksesBook.DeleteBook(inputBook)
+						if !res {
+							fmt.Println("Delete Failed, Try Again")
+						} else {
+							fmt.Println("Delete Success")
+						}
 					case 8:
 						fmt.Print("\n------Rent Book------\n\n")
 						fmt.Print("Available Book For Rent")
@@ -287,16 +331,16 @@ func main() {
 							fmt.Print("Owned by: ")
 							fmt.Println(value.Owned_by)
 
-							//var newRent entity.Rent
+							var newRent entity.Rent
 
 							fmt.Print("\nMasukkan ID Book yang ingin dipinjam: ")
-							//fmt.Scanln(&newRent.Book_id)
-							// res := aksesRent.PinjemBuku(newRent)
-							// if res.ID == 0 {
-							// 	fmt.Println("Pinjam Gagal")
-							// 	break
-							// }
-							// fmt.Print("\nBerhasil meminjam buku, durasi peminjaman buku adalah 7 hari, silahkan kembalikan tepat waktu !")
+							fmt.Scanln(&newRent.Book_id)
+							res := aksesRent.PinjemBuku(newRent)
+							if res.ID == 0 {
+								fmt.Println("Pinjam Gagal")
+								break
+							}
+							fmt.Print("\nBerhasil meminjam buku, durasi peminjaman buku adalah 7 hari, silahkan kembalikan tepat waktu !")
 
 						}
 

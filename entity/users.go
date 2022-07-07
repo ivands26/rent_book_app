@@ -13,6 +13,7 @@ type User struct {
 	Email    string
 	Password string
 	Books    []Book `gorm:"foreignKey:Owned_by;"` //user punya banyak buku
+	// Rent     []Rent `gorm:"foreignKey:User_id"`
 	//Rent     []Rent `gorm:"foreignKey:ID;"` //user bisa pinjem banyak buku
 	//Buku []Book `gorm:"many2many:user_books;"`
 }
