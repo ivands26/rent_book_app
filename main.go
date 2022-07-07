@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	"group_project/config"
 	"group_project/entity"
@@ -12,17 +13,38 @@ import (
 func halamanregis() entity.User {
 	var newUser entity.User
 	in := bufio.NewReader(os.Stdin)
-	fmt.Print("\nMasukan Nama: ")
+	fmt.Print("Masukan Nama: ")
 	newUser.Nama, _ = in.ReadString('\n')
+	newUser.Nama = strings.TrimSpace(newUser.Nama)
+	for newUser.Nama == "" {
+		fmt.Print("\nNama Tidak Boleh Kosong !\n\n")
+		fmt.Print("\nMasukan Nama Sekali Lagi: ")
+		newUser.Nama, _ = in.ReadString('\n')
+		newUser.Nama = strings.TrimSpace(newUser.Nama)
+	}
 	fmt.Print("Masukan No HP: ")
 	fmt.Scanln(&newUser.No_hp)
+	for newUser.No_hp == "" {
+		fmt.Print("\nNo HP Tidak Boleh Kosong !\n\n")
+		fmt.Print("\nMasukan No HP Sekali Lagi: ")
+		fmt.Scanln(&newUser.No_hp)
+	}
 	fmt.Print("Masukan Email: ")
 	fmt.Scanln(&newUser.Email)
+	for newUser.Email == "" {
+		fmt.Print("\nEmail Tidak Boleh Kosong !\n\n")
+		fmt.Print("\nMasukan Email Sekali Lagi: ")
+		fmt.Scanln(&newUser.Email)
+	}
 	fmt.Print("Masukan Password: ")
 	fmt.Scanln(&newUser.Password)
+	for newUser.Password == "" {
+		fmt.Print("\nPassword Tidak Boleh Kosong !\n\n")
+		fmt.Print("\nMasukan Password Sekali Lagi: ")
+		fmt.Scanln(&newUser.No_hp)
+	}
 	return newUser
 }
-
 func halamanlogin() (string, string) {
 	var email string
 	var pass string
@@ -83,14 +105,13 @@ func halamaneditprofile2(email string, input2 int, input3 int) (int, int) {
 	switch input3 {
 	case 1:
 		var namaUpdate string
+		in := bufio.NewReader(os.Stdin)
 		fmt.Println("\n-----Update Nama-----")
 		fmt.Println("Current Name : ", Val.Nama)
 		fmt.Print("New Name : ")
 		fmt.Scanln(&email)
-
-		in := bufio.NewReader(os.Stdin)
 		namaUpdate, _ = in.ReadString('\n')
-		// fmt.Scanln(&namaUpdate)
+		namaUpdate = strings.TrimSpace(namaUpdate)
 		res := aksesUser.UpdateUserNama(email, namaUpdate)
 		if res == true {
 			fmt.Println("Update Succes")
@@ -366,14 +387,14 @@ func main() {
 						}
 
 					case 4:
+						in := bufio.NewReader(os.Stdin)
 						var newBook entity.Book
 						fmt.Print("\nMasukkan Book Title: ")
-						in := bufio.NewReader(os.Stdin)
 						newBook.Judul, _ = in.ReadString('\n')
-						// fmt.Scanln(&newBook.Judul)
+						newBook.Judul = strings.TrimSpace(newBook.Judul)
 						fmt.Print("Masukkan Nama Author : ")
 						newBook.Author, _ = in.ReadString('\n')
-						// fmt.Scanln(&newBook.Author)
+						newBook.Author = strings.TrimSpace(newBook.Author)
 						newBook.Owned_by = Val.ID
 						newBook.Status = "Available"
 						res := aksesBook.InputBook(newBook)
@@ -405,13 +426,24 @@ func main() {
 						in := bufio.NewReader(os.Stdin)
 						fmt.Print("\nMasukkan ID Buku : ")
 						fmt.Scanln(&id)
-						// fmt.Scanln(&newBook.Judul)
 						fmt.Print("New Judul : ")
 						judulUpdate, _ = in.ReadString('\n')
-						// fmt.Scanln(&judulUpdate)
+						judulUpdate = strings.TrimSpace(judulUpdate)
+						for judulUpdate == "" {
+							fmt.Print("\nNama Tidak Boleh Kosong !\n\n")
+							fmt.Print("\nMasukan Nama Sekali Lagi: ")
+							judulUpdate, _ = in.ReadString('\n')
+							judulUpdate = strings.TrimSpace(judulUpdate)
+						}
 						fmt.Print("New Author : ")
 						authorUpdate, _ = in.ReadString('\n')
-						// fmt.Scanln(&authorUpdate)
+						authorUpdate = strings.TrimSpace(authorUpdate)
+						for authorUpdate == "" {
+							fmt.Print("\nNama Tidak Boleh Kosong !\n\n")
+							fmt.Print("\nMasukan Nama Sekali Lagi: ")
+							authorUpdate, _ = in.ReadString('\n')
+							authorUpdate = strings.TrimSpace(authorUpdate)
+						}
 						res := aksesBook.UpdateBookJA(id, judulUpdate, authorUpdate)
 						if !res {
 							fmt.Println("Update Failed, Try Again")
