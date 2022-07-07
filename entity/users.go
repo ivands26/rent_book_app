@@ -13,9 +13,7 @@ type User struct {
 	Email    string `gorm:"unique"`
 	Password string
 	Books    []Book `gorm:"foreignKey:Owned_by;OnUpdate:CASCADE,OnDelete:SET NULL"` //user punya banyak buku
-	// Rent     []Rent `gorm:"foreignKey:User_id"`
-	//Rent     []Rent `gorm:"foreignKey:ID;"` //user bisa pinjem banyak buku
-	//Buku []Book `gorm:"many2many:user_books;"`
+	Rent     []Rent `gorm:"foreignKey:IDUser;"`
 }
 
 type AksesUser struct {
@@ -150,16 +148,13 @@ func (au *AksesUser) UpdateUserPass(emailUser string, PassUpdate string) bool {
 	return true
 }
 
-// func UpdateRent(au *AksesUserBook) (emailUser string, idbuku int) {
-// 	var daftarBook []Book
-// 	updateExc := au.DB.Preload("User").Where("Email = ?", emailUserFind(&daftarBook)
-// 	if err := updateExc.Error; err != nil {
-// 		log.Fatal(err)
-// 		return false
-// 	}
-// 	if aff := updateExc.RowsAffected; aff < 1 {
-// 		log.Println("Tidak ada data yang diupdate")
-// 		return false
-// 	}
-// 	return true
-// }
+func (au *AksesUser) GetOwner(ownerid int) User {
+	var profileUser = User{}
+	err := au.DB.Where("ID = ?", ownerid).First(&profileUser)
+	if err.Error != nil {
+		log.Fatal(err.Statement.SQL.String())
+		return profileUser
+	}
+
+	return profileUser
+}

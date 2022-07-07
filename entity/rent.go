@@ -8,20 +8,33 @@ import (
 
 type Rent struct {
 	gorm.Model
-	User_id uint
-	Book_id uint
+	IDUser uint
+	IDBuku uint
 }
 
 type AksesRent struct {
 	DB *gorm.DB
 }
 
-func (ar *AksesRent) PinjemBuku(newRent Rent) Rent {
-	err := ar.DB.Create(&newRent).Error
+func (ar *AksesRent) RentBuku(userid, bookid uint) bool {
+	daftarrent := Rent{IDUser: userid, IDBuku: bookid}
+	err := ar.DB.Create(&daftarrent).Error
 	if err != nil {
 		log.Fatal(err)
-		return Rent{}
+		return false
 	}
-	return newRent
+	return true
+}
 
+func (ar *AksesRent) ReturnBuku(bookid uint) bool {
+	deleteExc := ar.DB.Where("id_buku = ?", bookid).Delete(&Rent{})
+	if err := deleteExc.Error; err != nil {
+		log.Fatal(err)
+		return false
+	}
+	if aff := deleteExc.RowsAffected; aff < 1 {
+		log.Println("Gagal Mengembalikan Buku")
+		return false
+	}
+	return true
 }

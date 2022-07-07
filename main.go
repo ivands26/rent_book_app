@@ -52,6 +52,21 @@ func validasiemailpass(emailauth, passauth, emailpassauth bool) bool {
 	return has
 }
 
+func halamanmyprofile(email string) {
+	conn := config.InitDB()
+	aksesUser := entity.AksesUser{DB: conn}
+	Val := aksesUser.GetProfileUser(email)
+	fmt.Println("\nProfile")
+	fmt.Print("ID\t: ")
+	fmt.Println(Val.ID)
+	fmt.Print("Nama\t: ")
+	fmt.Println(Val.Nama)
+	fmt.Print("No HP\t: ")
+	fmt.Println(Val.No_hp)
+	fmt.Print("Email\t: ")
+	fmt.Println(Val.Email)
+}
+
 func halamaneditprofile() {
 	fmt.Println("\nChoose what you want to edit: ")
 	fmt.Println("1. Nama")
@@ -64,13 +79,12 @@ func halamaneditprofile() {
 func halamaneditprofile2(email string, input2 int, input3 int) (int, int) {
 	conn := config.InitDB()
 	aksesUser := entity.AksesUser{DB: conn}
-
+	Val := aksesUser.GetProfileUser(email)
 	switch input3 {
 	case 1:
 		var namaUpdate string
 		fmt.Println("\n-----Update Nama-----")
-		val := aksesUser.GetProfileUser(email)
-		fmt.Println("Current Name : ", val.Nama)
+		fmt.Println("Current Name : ", Val.Nama)
 		fmt.Print("New Name : ")
 		fmt.Scanln(&email)
 
@@ -87,8 +101,7 @@ func halamaneditprofile2(email string, input2 int, input3 int) (int, int) {
 	case 2:
 		var hpUpdate string
 		fmt.Println("\n-----Update No. HP-----")
-		val := aksesUser.GetProfileUser(email)
-		fmt.Println("Current Phone Number : ", val.No_hp)
+		fmt.Println("Current Phone Number : ", Val.No_hp)
 		fmt.Print("New Phone Number : ")
 		fmt.Scanln(&email)
 		fmt.Scanln(&hpUpdate)
@@ -102,8 +115,7 @@ func halamaneditprofile2(email string, input2 int, input3 int) (int, int) {
 	case 3:
 		var surelUpdate string
 		fmt.Println("\n-----Update Email-----")
-		val := aksesUser.GetProfileUser(email)
-		fmt.Println("Current Email : ", val.Email)
+		fmt.Println("Current Email : ", Val.Email)
 		fmt.Print("New Email : ")
 		fmt.Scanln(&email)
 		fmt.Scanln(&surelUpdate)
@@ -119,8 +131,7 @@ func halamaneditprofile2(email string, input2 int, input3 int) (int, int) {
 	case 4:
 		var PassUpdate string
 		fmt.Println("\n-----Update Password-----")
-		val := aksesUser.GetProfileUser(email)
-		fmt.Println("Current Password : ", val.Password)
+		fmt.Println("Current Password : ", Val.Password)
 		fmt.Print("New Password : ")
 		fmt.Scanln(&email)
 		fmt.Scanln(&PassUpdate)
@@ -130,8 +141,6 @@ func halamaneditprofile2(email string, input2 int, input3 int) (int, int) {
 		} else {
 			fmt.Println("Update Failed, Try Again")
 		}
-		//default:
-		//	continue
 	}
 	return input3, input2
 }
@@ -152,12 +161,132 @@ func deleteBook() int {
 	return inputBook
 }
 
+func halamanlistmybook(email string) {
+	conn := config.InitDB()
+	aksesUser := entity.AksesUser{DB: conn}
+	aksesBook := entity.AksesBook{DB: conn}
+	Val := aksesUser.GetProfileUser(email)
+	fmt.Print("\n------List My Book-----\n\n")
+	for _, val := range aksesBook.GetMyBook(email) {
+		fmt.Print("\nID Book\t: ")
+		fmt.Println(val.ID)
+		fmt.Print("Title\t: ")
+		fmt.Println(val.Judul)
+		fmt.Print("Isbn\t: ")
+		fmt.Println(val.ISBN)
+		fmt.Print("Author\t: ")
+		fmt.Println(val.Author)
+		fmt.Print("Owned by: ")
+		fmt.Println(val.Nama)
+		fmt.Print("Status\t: ")
+		fmt.Println(val.Status)
+	}
+	var IDUser uint = Val.ID
+	fmt.Print("\n\nList My Rented Book\n\n")
+	if len(aksesBook.GetDataYourRentedBook(IDUser)) == 0 {
+		fmt.Println("---No book Rented---")
+	} else {
+		for _, val := range aksesBook.GetDataYourRentedBook(IDUser) {
+			fmt.Print("\nID Book\t: ")
+			fmt.Println(val.ID)
+			fmt.Print("Title\t: ")
+			fmt.Println(val.Judul)
+			fmt.Print("Isbn\t: ")
+			fmt.Println(val.ISBN)
+			fmt.Print("Author\t: ")
+			fmt.Println(val.Author)
+
+			ownerid := val.Owned_by
+			own := aksesUser.GetOwner(ownerid)
+			fmt.Print("Owned by: ")
+			fmt.Println(own.Nama)
+		}
+	}
+}
+
+func halamanrentbook(email string) {
+	conn := config.InitDB()
+	aksesUser := entity.AksesUser{DB: conn}
+	aksesBook := entity.AksesBook{DB: conn}
+	aksesRent := entity.AksesRent{DB: conn}
+	Val := aksesUser.GetProfileUser(email)
+	var bookstatus string = "Available"
+	fmt.Print("\n------Rent Book------\n\n")
+	fmt.Print("Available Book For Rent\n\n")
+	ab := aksesBook.GetDataRentBook(email, bookstatus)
+	if len(ab) == 0 {
+		fmt.Println("---No Book Available For Rent---")
+	} else {
+		for _, val := range ab {
+			fmt.Print("\nID Book\t: ")
+			fmt.Println(val.ID)
+			fmt.Print("Title\t: ")
+			fmt.Println(val.Judul)
+			fmt.Print("Isbn\t: ")
+			fmt.Println(val.ISBN)
+			fmt.Print("Author\t: ")
+			fmt.Println(val.Author)
+			fmt.Print("Owned by: ")
+			fmt.Println(val.Nama)
+		}
+		var IDBuku uint
+		var IDUser uint = Val.ID
+		var stat string = "Rented"
+		fmt.Print("\nMasukkan ID Book yang ingin dipinjam : ")
+		fmt.Scanln(&IDBuku)
+		res := aksesRent.RentBuku(IDUser, IDBuku)
+		status := aksesBook.Updatestatus(IDBuku, stat)
+		if !res && !status {
+			fmt.Println("Gagal untuk meminjam, silahkan coba lagi")
+		} else {
+			fmt.Print("\nBerhasil meminjam buku. Durasi peminjaman adalah 7 hari, silahkan kembalikan tepat waktu !\n")
+		}
+	}
+}
+
+func halamanreturnbook(email string) {
+	conn := config.InitDB()
+	aksesUser := entity.AksesUser{DB: conn}
+	aksesBook := entity.AksesBook{DB: conn}
+	aksesRent := entity.AksesRent{DB: conn}
+	Val := aksesUser.GetProfileUser(email)
+	var IDUser uint = Val.ID
+	fmt.Print("\n-----Return Book-----\n\n")
+	fmt.Print("List Your Rented Book\n\n")
+	if len(aksesBook.GetDataYourRentedBook(IDUser)) == 0 {
+		fmt.Println("---No book Rented---")
+	} else {
+		for _, val := range aksesBook.GetDataYourRentedBook(IDUser) {
+			fmt.Print("\nID Book\t: ")
+			fmt.Println(val.ID)
+			fmt.Print("Title\t: ")
+			fmt.Println(val.Judul)
+			fmt.Print("Isbn\t: ")
+			fmt.Println(val.ISBN)
+			fmt.Print("Author\t: ")
+			fmt.Println(val.Author)
+			fmt.Print("Owned by: ")
+			fmt.Println(val.Owned_by)
+		}
+		var IDBuku uint
+		var stat string = "Available"
+		fmt.Print("\nMasukkan ID Book yang dikembalikan : ")
+		fmt.Scanln(&IDBuku)
+		res := aksesRent.ReturnBuku(IDBuku)
+		status := aksesBook.Updatestatus(IDBuku, stat)
+		if !res && !status {
+			fmt.Println("Gagal untuk kembalikan buku, silahkan coba lagi")
+		}
+		fmt.Print("\nBerhasil kembalikan buku. Terimakasih sudah mengembalikan buku tepat waktu!\n")
+	}
+
+}
+
 func main() {
 	conn := config.InitDB()
 	config.MigrateDB(conn)
 	aksesUser := entity.AksesUser{DB: conn}
 	aksesBook := entity.AksesBook{DB: conn}
-	aksesRent := entity.AksesRent{DB: conn}
 
 	var email, pass string
 	var input int
@@ -193,34 +322,24 @@ func main() {
 			if cek == true {
 				input2 = 0
 				for input2 != 80 {
-					val := aksesUser.GetProfileUser(email)
-					fmt.Printf("\n\t---Welcome %s !!---\n\n", val.Nama)
+					Val := aksesUser.GetProfileUser(email)
+					fmt.Printf("\n\t---Welcome %s !!---\n\n", Val.Nama)
 					fmt.Println("1. My Profile")
 					fmt.Println("2. Edit Profile")
 					fmt.Println("3. Delete Account")
 					fmt.Println("4. Add My Book")
-					fmt.Println("5. List My Book")
+					fmt.Println("5. List My Book and My Rented Book")
 					fmt.Println("6. Edit My Book")
 					fmt.Println("7. Delete My Book")
-					fmt.Println("8. Rent Book") //harus input id user dan id book
-					fmt.Println("9. Rent Book List")
-					fmt.Println("10. Return Book")
+					fmt.Println("8. Rent Book")
+					fmt.Println("9. Return Book")
 					fmt.Print("80. Log Out \n\n")
 					fmt.Print("Pilih Menu : ")
 					fmt.Scanln(&input2)
 
 					switch input2 {
 					case 1:
-						val = aksesUser.GetProfileUser(email)
-						fmt.Println("\nProfile")
-						fmt.Print("ID\t: ")
-						fmt.Println(val.ID)
-						fmt.Print("Nama\t: ")
-						fmt.Println(val.Nama)
-						fmt.Print("No HP\t: ")
-						fmt.Println(val.No_hp)
-						fmt.Print("Email\t: ")
-						fmt.Println(val.Email)
+						halamanmyprofile(email)
 						fmt.Print("\n55. Kembali ke menu sebelumnya\n\n")
 						fmt.Print("Pilih Menu : ")
 						fmt.Scanln(&input2)
@@ -255,8 +374,8 @@ func main() {
 						fmt.Print("Masukkan Nama Author : ")
 						newBook.Author, _ = in.ReadString('\n')
 						// fmt.Scanln(&newBook.Author)
-						val := aksesUser.GetProfileUser(email)
-						newBook.Owned_by = val.ID
+						newBook.Owned_by = Val.ID
+						newBook.Status = "Available"
 						res := aksesBook.InputBook(newBook)
 						if res.ID == 0 {
 							fmt.Println("Buku Gagal Diinput")
@@ -264,17 +383,7 @@ func main() {
 						}
 						fmt.Println("Buku Berhasil Diinput")
 					case 5:
-						fmt.Print("\n------List My Book-----\n\n")
-						for _, val := range aksesBook.GetMyBook(email) {
-							fmt.Print("\nID Book\t: ")
-							fmt.Println(val.ID)
-							fmt.Print("Title\t: ")
-							fmt.Println(val.Judul)
-							fmt.Print("Isbn\t: ")
-							fmt.Println(val.ISBN)
-							fmt.Print("Author\t: ")
-							fmt.Println(val.Author)
-						}
+						halamanlistmybook(email)
 						fmt.Print("\n55. Kembali ke menu sebelumnya\n\n")
 						fmt.Print("Pilih Menu : ")
 						fmt.Scanln(&input2)
@@ -330,32 +439,10 @@ func main() {
 							fmt.Println("Delete Success")
 						}
 					case 8:
-						fmt.Print("\n------Rent Book------\n\n")
-						fmt.Print("Available Book For Rent")
-						for _, value := range aksesBook.GetDataBook() {
-							fmt.Print("\nID Book\t: ")
-							fmt.Println(value.ID)
-							fmt.Print("Title\t: ")
-							fmt.Println(value.Judul)
-							fmt.Print("Isbn\t: ")
-							fmt.Println(value.ISBN)
-							fmt.Print("Author\t: ")
-							fmt.Println(value.Author)
-							fmt.Print("Owned by: ")
-							fmt.Println(value.Owned_by)
+						halamanrentbook(email)
 
-							var newRent entity.Rent
-
-							fmt.Print("\nMasukkan ID Book yang ingin dipinjam: ")
-							fmt.Scanln(&newRent.Book_id)
-							res := aksesRent.PinjemBuku(newRent)
-							if res.ID == 0 {
-								fmt.Println("Pinjam Gagal")
-								break
-							}
-							fmt.Print("\nBerhasil meminjam buku, durasi peminjaman buku adalah 7 hari, silahkan kembalikan tepat waktu !")
-
-						}
+					case 9:
+						halamanreturnbook(email)
 
 					default:
 						continue
@@ -366,7 +453,6 @@ func main() {
 		case 3:
 			fmt.Println("\nDaftar Buku")
 			for _, value := range aksesBook.GetDataBook() {
-
 				fmt.Print("\nID Book\t: ")
 				fmt.Println(value.ID)
 				fmt.Print("Title\t: ")
@@ -376,13 +462,9 @@ func main() {
 				fmt.Print("Author\t: ")
 				fmt.Println(value.Author)
 				fmt.Print("Owned by: ")
-				fmt.Println(value.Owned_by)
-			}
-
-		case 10:
-			fmt.Println("Daftar Seluruh User")
-			for _, val := range aksesUser.GetAllData() {
-				fmt.Println(val)
+				fmt.Println(value.Nama)
+				fmt.Print("Status\t: ")
+				fmt.Println(value.Status)
 			}
 		default:
 			continue
