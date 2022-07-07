@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 
 	"group_project/config"
 	"group_project/entity"
@@ -9,8 +11,9 @@ import (
 
 func halamanregis() entity.User {
 	var newUser entity.User
+	in := bufio.NewReader(os.Stdin)
 	fmt.Print("\nMasukan Nama: ")
-	fmt.Scanln(&newUser.Nama)
+	newUser.Nama, _ = in.ReadString('\n')
 	fmt.Print("Masukan No HP: ")
 	fmt.Scanln(&newUser.No_hp)
 	fmt.Print("Masukan Email: ")
@@ -70,7 +73,10 @@ func halamaneditprofile2(email string, input2 int, input3 int) (int, int) {
 		fmt.Println("Current Name : ", val.Nama)
 		fmt.Print("New Name : ")
 		fmt.Scanln(&email)
-		fmt.Scanln(&namaUpdate)
+
+		in := bufio.NewReader(os.Stdin)
+		namaUpdate, _ = in.ReadString('\n')
+		// fmt.Scanln(&namaUpdate)
 		res := aksesUser.UpdateUserNama(email, namaUpdate)
 		if res == true {
 			fmt.Println("Update Succes")
@@ -243,9 +249,12 @@ func main() {
 					case 4:
 						var newBook entity.Book
 						fmt.Print("\nMasukkan Book Title: ")
-						fmt.Scanln(&newBook.Judul)
+						in := bufio.NewReader(os.Stdin)
+						newBook.Judul, _ = in.ReadString('\n')
+						// fmt.Scanln(&newBook.Judul)
 						fmt.Print("Masukkan Nama Author : ")
-						fmt.Scanln(&newBook.Author)
+						newBook.Author, _ = in.ReadString('\n')
+						// fmt.Scanln(&newBook.Author)
 						val := aksesUser.GetProfileUser(email)
 						newBook.Owned_by = val.ID
 						res := aksesBook.InputBook(newBook)
@@ -284,12 +293,16 @@ func main() {
 							fmt.Print("Author\t: ")
 							fmt.Println(val.Author)
 						}
+						in := bufio.NewReader(os.Stdin)
 						fmt.Print("\nMasukkan ID Buku : ")
 						fmt.Scanln(&id)
+						// fmt.Scanln(&newBook.Judul)
 						fmt.Print("New Judul : ")
-						fmt.Scanln(&judulUpdate)
+						judulUpdate, _ = in.ReadString('\n')
+						// fmt.Scanln(&judulUpdate)
 						fmt.Print("New Author : ")
-						fmt.Scanln(&authorUpdate)
+						authorUpdate, _ = in.ReadString('\n')
+						// fmt.Scanln(&authorUpdate)
 						res := aksesBook.UpdateBookJA(id, judulUpdate, authorUpdate)
 						if !res {
 							fmt.Println("Update Failed, Try Again")
