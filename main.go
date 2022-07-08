@@ -429,21 +429,21 @@ func main() {
 						fmt.Print("New Judul : ")
 						judulUpdate, _ = in.ReadString('\n')
 						judulUpdate = strings.TrimSpace(judulUpdate)
-						for judulUpdate == "" {
-							fmt.Print("\nNama Tidak Boleh Kosong !\n\n")
-							fmt.Print("\nMasukan Nama Sekali Lagi: ")
-							judulUpdate, _ = in.ReadString('\n')
-							judulUpdate = strings.TrimSpace(judulUpdate)
-						}
+						// for judulUpdate == "" {
+						// 	fmt.Print("\nNama Tidak Boleh Kosong !\n\n")
+						// 	fmt.Print("\nMasukan Nama Sekali Lagi: ")
+						// 	judulUpdate, _ = in.ReadString('\n')
+						// 	judulUpdate = strings.TrimSpace(judulUpdate)
+						// }
 						fmt.Print("New Author : ")
 						authorUpdate, _ = in.ReadString('\n')
 						authorUpdate = strings.TrimSpace(authorUpdate)
-						for authorUpdate == "" {
-							fmt.Print("\nNama Tidak Boleh Kosong !\n\n")
-							fmt.Print("\nMasukan Nama Sekali Lagi: ")
-							authorUpdate, _ = in.ReadString('\n')
-							authorUpdate = strings.TrimSpace(authorUpdate)
-						}
+						// for authorUpdate == "" {
+						// 	fmt.Print("\nNama Tidak Boleh Kosong !\n\n")
+						// 	fmt.Print("\nMasukan Nama Sekali Lagi: ")
+						// 	authorUpdate, _ = in.ReadString('\n')
+						// 	authorUpdate = strings.TrimSpace(authorUpdate)
+						// }
 						res := aksesBook.UpdateBookJA(id, judulUpdate, authorUpdate)
 						if !res {
 							fmt.Println("Update Failed, Try Again")

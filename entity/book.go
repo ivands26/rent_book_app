@@ -98,6 +98,13 @@ func (ab *AksesBook) GetBookJA(emailUser string) []Book {
 }
 
 func (ab *AksesBook) UpdateBookJA(id int, judulUpdate string, authorUpdate string) bool {
+	kosong := map[string]interface{}{}
+	if judulUpdate != "" {
+		kosong["judul"] = judulUpdate
+	}
+	if authorUpdate != "" {
+		kosong["author"] = authorUpdate
+	}
 	updateExc := ab.DB.Model(&Book{}).Where("ID = ?", id).Updates(Book{Judul: judulUpdate, Author: authorUpdate})
 	if err := updateExc.Error; err != nil {
 		log.Fatal(err)
